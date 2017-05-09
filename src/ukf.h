@@ -38,7 +38,8 @@ public:
   ///* state covariance matrix
   MatrixXd P_;
 
-  MatrixXd R_;
+  MatrixXd R_Laser;
+  MatrixXd R_Radar;
 
   MatrixXd S_;
 
@@ -112,7 +113,7 @@ public:
    * matrix
    * @param delta_t Time between k and k+1 in s
    */
-  void Prediction(double delta_t);
+  void Prediction(MeasurementPackage meas_package, double delta_t);
 
 
   /**
@@ -138,6 +139,7 @@ public:
   void PredictMeanAndCovariance();
 
   void PredictRadarMeasurement();
+  void PredictLidarMeasurement();
   
   /**
    * Feed sigma points through the process model

@@ -26,66 +26,67 @@ public:
   ///* state vector: [pos1 pos2 vel_abs yaw_angle yaw_rate] in SI units and rad
   VectorXd x_;
 
+  // State sigma points
   MatrixXd Xsig_;
 
-  ///* predicted sigma points matrix
+  // predicted sigma points matrix
   MatrixXd Xsig_pred_;
 
+  // Measurement sigma points
   MatrixXd Zsig_;
 
+  // Predicted measurements
   VectorXd z_pred_;
 
-  ///* state covariance matrix
+  // State covariance matrix
   MatrixXd P_;
 
+  // Measurement noise
   MatrixXd R_Laser;
   MatrixXd R_Radar;
-
   MatrixXd S_;
 
-  ///* time when the state is true, in us
+  // time when the state is true, in us
   long long time_us_;
 
-  ///* Process noise standard deviation longitudinal acceleration in m/s^2
+  // Process noise standard deviation longitudinal acceleration in m/s^2
   double std_a_;
 
-  ///* Process noise standard deviation yaw acceleration in rad/s^2
+  // Process noise standard deviation yaw acceleration in rad/s^2
   double std_yawdd_;
 
-  ///* Laser measurement noise standard deviation position1 in m
+  // Laser measurement noise standard deviation position1 in m
   double std_laspx_;
 
-  ///* Laser measurement noise standard deviation position2 in m
+  // Laser measurement noise standard deviation position2 in m
   double std_laspy_;
 
-  ///* Radar measurement noise standard deviation radius in m
+  // Radar measurement noise standard deviation radius in m
   double std_radr_;
 
-  ///* Radar measurement noise standard deviation angle in rad
+  // Radar measurement noise standard deviation angle in rad
   double std_radphi_;
 
-  ///* Radar measurement noise standard deviation radius change in m/s
+  // Radar measurement noise standard deviation radius change in m/s
   double std_radrd_ ;
 
-  ///* Weights of sigma points
+  // Weights of sigma points
   VectorXd weights_;
 
-  ///* State dimension
+  // State dimension
   int n_x_;
 
-  ///* Augmented state dimension
+  // Augmented state dimension
   int n_aug_;
 
-  //Measurement dimension
+  // Measurement dimension
   int n_z_;
 
-  ///* Sigma point spreading parameter
+  // Sigma point spreading parameter
   double lambda_;
 
-  ///* the current NIS for radar
+  // NIS values for radar and lidar
   double NIS_radar_;
-
-  ///* the current NIS for laser
   double NIS_laser_;
 
   long long previous_timestamp_;
@@ -115,7 +116,6 @@ public:
    */
   void Prediction(MeasurementPackage meas_package, double delta_t);
 
-
   /**
    * Extracts measurement data depending on sensor type, updates delta_t, and returns
    * the measurement vector.
@@ -131,21 +131,30 @@ public:
 
   /**
    * Augments the sigma points with process error
+   * Returns a matrix containing the sigma points
    */
   MatrixXd AugmentSigmaPoints();
 
+
+  /**
+   * Predicts the sigma points by feeding them through the process model
+   * @param Xsig_aug The measurement at k+1
+   * @param delta_t where the calculated elapsed time will be stored
+   */
   void PredictSigmaPoints(MatrixXd Xsig_aug, double delta_t);
 
   void PredictMeanAndCovariance();
 
+  /**
+   * Predict Radar measurement
+   */
   void PredictRadarMeasurement();
+
+  /**
+   * Predict Lidar measurement
+   */
   void PredictLidarMeasurement();
   
-  /**
-   * Feed sigma points through the process model
-   */
-  // void SigmaPointPrediction(MatrixXd* Xsig_out);
-
   /**
    * Calls UpdateLidar or UpdateRadar depending on sensor type
    * @param meas_package The measurement at k+1
@@ -164,7 +173,6 @@ public:
    */
   void UpdateRadar(MeasurementPackage meas_package);
 
-  void UpdateState(VectorXd z);
 };
 
 #endif /* UKF_H */
